@@ -1,0 +1,26 @@
+{
+  "name": "celebrity-chat",
+  "version": "1.0.0",
+  "description": "A simple chat application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vexleet/celebrity-chat.git"
+  },
+  "keywords": [
+    "chat"
+  ],
+  "author": "vex1337 <abda70226@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vexleet/celebrity-chat/issues"
+  },
+  "homepage": "https://github.com/vexleet/celebrity-chat#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  }
+}
