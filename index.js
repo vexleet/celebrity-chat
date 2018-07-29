@@ -1,9 +1,14 @@
-let app = require('express')();
+let express = require('express');
+let app = express();
+let path = require('path');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let users = {};
 
+
 app.get('/', function (req, res) {
+    app.use('/public', express.static(__dirname + '/public'));
+
     res.sendFile(__dirname + '/index.html');
 });
 
@@ -35,7 +40,7 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('connection', nickname);
     });
     socket.on('is typing', function (nickname) {
-        io.emit('is typing', nickname);
+        socket.broadcast.emit('is typing', nickname);
     });
     socket.on('is not typing', function (nickname) {
         io.emit('is not typing', nickname);
