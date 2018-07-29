@@ -75,6 +75,16 @@
             width: 90%;
             margin-right: .5%;
         }
+
+        #users{
+            float: right;
+            list-style-type: none;
+            border: 2px solid black;
+            padding: 20px;
+            background: black;
+            color: white;
+        }
+
     </style>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -101,7 +111,7 @@
             socket.emit('nickname', $('#nickname').val());
             $('#nickname').val();
             return false;
-        })
+        });
         $('#m').keyup(function () {
             if ($('#m').val().length >= 1 && isWriting === false) {
                 let nickname = '';
@@ -119,9 +129,15 @@
         });
         socket.on('connection', function (nickname) {
             $('#messages').append($('<li>').text(`${nickname} connected`));
+            showOnlineUsers();
         });
-        socket.on('disconnect', function (nickname) {
-            $('#messages').append($('<li>').text(`${nickname} disconnected`));
+        socket.on('disconnect', function (nickname, users) {
+            if(nickname !== 'transport close') {
+                $('#messages').append($('<li>').text(`${nickname} disconnected`));
+                allUsers = users;
+                console.log(allUsers);
+                showOnlineUsers();
+            }
         });
         socket.on('chat message', function (msg) {
             $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
@@ -134,7 +150,18 @@
         });
         socket.on('nickname', function (users) {
             allUsers = users;
+            showOnlineUsers();
         });
+
+        function showOnlineUsers(){
+            console.log(true);
+            $('#users').empty();
+            $('#users').append($('<li>').text('Online Users'))
+            for(let key in allUsers){
+                $('#users').append($('<li>').text(allUsers[key].nickname))
+            }
+        }
+
     });
 </script>
 <body>
@@ -143,6 +170,7 @@
     <input type="text" autocomplete="off" name="nickname" id="nickname">
     <button>Send</button>
 </form>
+<ul id="users"></ul>
 <ul id="messages"></ul>
 <form action="" class="chat">
     <input id="m" autocomplete="off"/>

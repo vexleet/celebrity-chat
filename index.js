@@ -10,8 +10,14 @@ app.get('/', function (req, res) {
 io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
-        io.emit('disconnect', users[socket.id].nickname);
-        delete users[socket.id];
+        if(users[socket.id]) {
+            let username = users[socket.id].nickname;
+            delete users[socket.id];
+            io.emit('disconnect',username, users);
+        }
+        else{
+            io.emit('disconnect');
+        }
     });
     socket.on('chat message', function (msg, nickname) {
         io.emit('chat message', { nickname: nickname, text: msg });
