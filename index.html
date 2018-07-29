@@ -27,21 +27,21 @@
             background: #eee;
         }
 
-        form #nickname{
+        form #nickname {
             border: 0;
             padding: 10px;
             width: 90%;
             margin-right: .5%;
         }
 
-        form button{
+        form button {
             width: 9%;
             background: rgb(130, 224, 255);
             border: none;
             padding: 10px;
         }
 
-        form{
+        form {
             background: #000;
             padding: 3px;
             position: fixed;
@@ -49,7 +49,7 @@
             width: 100%;
         }
 
-        label{
+        label {
             color: white;
         }
 
@@ -88,31 +88,40 @@
         $('.chat').submit(function () {
             let nickname = '';
             nickname = currentUsers[socket.id].nickname;
-
-            socket.emit('chat message', $('#m').val(), nickname);
+            if($('#m').val().length >= 1) {
+                socket.emit('chat message', $('#m').val(), nickname);
+            }
             $('#m').val('');
             return false;
         });
-
-        $('.nickname').submit(function (){
+        $('.nickname').submit(function () {
             $('.nickname').css('display', 'none');
             $('.chat').css('display', 'block');
             socket.emit('nickname', $('#nickname').val());
             $('#nickname').val();
             return false;
         })
+        $('#m').keypress(function () {
+            console.log(isWriting);
+            console.log($('#m').val().length);
 
-        $('#m').keypress(function(){
-            if($('#m').val().length >= 0 && !isWriting){
+            if ($('#m').val().length >= 0 && isWriting === false) {
+                let nickname = '';
+                nickname = currentUsers[socket.id].nickname;
                 isWriting = true;
-                socket.emit('is typing');
+                console.log(isWriting);
+                socket.emit('is typing', nickname);
+            }
+
+        });
+        $('#m').focusout(function () {
+            if ($('#m').val().length === 0 && isWriting) {
+                let nickname = '';
+                nickname = currentUsers[socket.id].nickname;
+                isWriting = false;
+                socket.emit('is not typing', nickname);
             }
         });
-        $('#m').focusout(function(){
-            isWriting = false;
-            socket.emit('is not typing');
-        });
-
         socket.on('connection', function () {
             $('#messages').append($('<li>').text('A user connected'));
         });
@@ -120,16 +129,15 @@
             $('#messages').append($('<li>').text('A user disconnected'));
         });
         socket.on('chat message', function (msg) {
-            console.log(msg);
             $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
         });
-        socket.on('is typing', function(){
-            $('#messages').append($('<li>').text('A user is typing'));
+        socket.on('is typing', function (nickname) {
+            $('#messages').append($('<li>').text(`${nickname} is typing`).addClass(`${nickname}`));
         });
-        socket.on('is not typing', function(){
-
+        socket.on('is not typing', function (nickname) {
+            $(`.${nickname}`).remove();
         });
-        socket.on('nickname', function(name){
+        socket.on('nickname', function (name) {
             currentUsers = name;
         });
     });

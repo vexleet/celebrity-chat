@@ -14,7 +14,7 @@ io.on('connection', function (socket) {
         io.emit('disconnect');
     });
     socket.on('chat message', function (msg, nickname) {
-        socket.broadcast.emit('chat message', { nickname: nickname, text: msg });
+        io.emit('chat message', { nickname: nickname, text: msg });
     });
     socket.on('nickname', function (name) {
         if(users[name] == undefined){
@@ -27,11 +27,11 @@ io.on('connection', function (socket) {
         }
         io.emit('nickname', users);
     });
-    socket.on('is typing', function () {
-        io.emit('is typing');
+    socket.on('is typing', function (nickname) {
+        io.emit('is typing', nickname);
     });
-    socket.on('is not typing', function () {
-        io.emit('is not typing');
+    socket.on('is not typing', function (nickname) {
+        io.emit('is not typing', nickname);
     });
 });
 
