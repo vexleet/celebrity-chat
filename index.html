@@ -84,10 +84,11 @@
     $(function () {
         let socket = io();
         let isWriting = false;
-        let currentUsers = {};
+        let allUsers = {};
+
         $('.chat').submit(function () {
             let nickname = '';
-            nickname = currentUsers[socket.id].nickname;
+            nickname = allUsers[socket.id].nickname;
             if($('#m').val().length >= 1) {
                 socket.emit('chat message', $('#m').val(), nickname);
             }
@@ -101,32 +102,26 @@
             $('#nickname').val();
             return false;
         })
-        $('#m').keypress(function () {
-            console.log(isWriting);
-            console.log($('#m').val().length);
-
-            if ($('#m').val().length >= 0 && isWriting === false) {
+        $('#m').keyup(function () {
+            if ($('#m').val().length >= 1 && isWriting === false) {
                 let nickname = '';
-                nickname = currentUsers[socket.id].nickname;
+                nickname = allUsers[socket.id].nickname;
                 isWriting = true;
                 console.log(isWriting);
                 socket.emit('is typing', nickname);
             }
-
-        });
-        $('#m').focusout(function () {
             if ($('#m').val().length === 0 && isWriting) {
                 let nickname = '';
-                nickname = currentUsers[socket.id].nickname;
+                nickname = allUsers[socket.id].nickname;
                 isWriting = false;
                 socket.emit('is not typing', nickname);
             }
         });
-        socket.on('connection', function () {
-            $('#messages').append($('<li>').text('A user connected'));
+        socket.on('connection', function (nickname) {
+            $('#messages').append($('<li>').text(`${nickname} connected`));
         });
-        socket.on('disconnect', function () {
-            $('#messages').append($('<li>').text('A user disconnected'));
+        socket.on('disconnect', function (nickname) {
+            $('#messages').append($('<li>').text(`${nickname} disconnected`));
         });
         socket.on('chat message', function (msg) {
             $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
@@ -137,8 +132,8 @@
         socket.on('is not typing', function (nickname) {
             $(`.${nickname}`).remove();
         });
-        socket.on('nickname', function (name) {
-            currentUsers = name;
+        socket.on('nickname', function (users) {
+            allUsers = users;
         });
     });
 </script>

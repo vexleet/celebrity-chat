@@ -8,24 +8,25 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-    socket.broadcast.emit('connection');
 
     socket.on('disconnect', function () {
-        io.emit('disconnect');
+        io.emit('disconnect', users[socket.id].nickname);
+        delete users[socket.id];
     });
     socket.on('chat message', function (msg, nickname) {
         io.emit('chat message', { nickname: nickname, text: msg });
     });
-    socket.on('nickname', function (name) {
-        if(users[name] == undefined){
+    socket.on('nickname', function (nickname) {
+        if(users[nickname] == undefined){
             let socketId = socket.id;
             var userId = Object.keys(users).length + 100;
             users[socketId] = {
                 id: userId,
-                nickname: name,
-            }
+                nickname: nickname,
+            };
         }
-        io.emit('nickname', users);
+        io.emit('nickname', users)
+        socket.broadcast.emit('connection', nickname);
     });
     socket.on('is typing', function (nickname) {
         io.emit('is typing', nickname);
