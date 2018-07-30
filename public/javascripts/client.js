@@ -13,30 +13,28 @@ $(function() {
         $('#m').val('');
         return false;
     });
-    $('.nickname').submit(function () {
-        $('.nickname').css('display', 'none');
-        $('.chat').css('display', 'block');
-        socket.emit('nickname', $('#nickname').val());
-        $('#nickname').val();
-        return false;
-    });
+
     $('#m').keyup(function () {
         if ($('#m').val().length >= 1 && isWriting === false) {
             let nickname = '';
-            nickname = allUsers[socket.id].nickname;
+            nickname = allUsers[socket.id].nickname.split(' ');
             isWriting = true;
             console.log(isWriting);
-            socket.emit('is typing', nickname);
+            socket.emit('is typing', nickname, nickname[nickname.length - 1].toLowerCase());
         }
         if ($('#m').val().length === 0 && isWriting) {
             let nickname = '';
-            nickname = allUsers[socket.id].nickname;
+            nickname = allUsers[socket.id].nickname.split(' ');
+            console.log(nickname);
             isWriting = false;
-            socket.emit('is not typing', nickname);
+            socket.emit('is not typing', nickname[nickname.length - 1].toLowerCase());
         }
     });
-    socket.on('connection', function (nickname) {
-        $('#messages').append($('<li>').text(`${nickname} connected`));
+    socket.on('connection', function (nickname, users) {
+        allUsers = users;
+        if(nickname !== 'false') {
+            $('#messages').append($('<li>').text(`${nickname} connected`));
+        }
         showOnlineUsers();
     });
     socket.on('disconnect', function (nickname, users) {
@@ -50,15 +48,11 @@ $(function() {
     socket.on('chat message', function (msg) {
         $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
     });
-    socket.on('is typing', function (nickname) {
-        $('#messages').append($('<li>').text(`${nickname} is typing`).addClass(`${nickname}`));
+    socket.on('is typing', function (nickname, className) {
+        $('#messages').append($('<li>').text(`${nickname.join(' ')} is typing`).addClass(className));
     });
     socket.on('is not typing', function (nickname) {
         $(`.${nickname}`).remove();
-    });
-    socket.on('nickname', function (users) {
-        allUsers = users;
-        showOnlineUsers();
     });
 
     function showOnlineUsers(){
