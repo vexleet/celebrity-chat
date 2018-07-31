@@ -73,9 +73,9 @@ $(function () {
 
     function showOnlineUsers() {
         $('#users').empty();
-        $('#users').append($('<li>').text('Online Users:'));
+        $('#users').append($('<li>').text(`${Object.keys(allUsers).length} Online Users:`));
         for (let key in allUsers) {
-            $('#users').append($('<li>').text(allUsers[key].nickname))
+            $('#users').append($('<li>').text(allUsers[key].nickname).addClass('user'))
         }
     }
 });
