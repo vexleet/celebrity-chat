@@ -57,7 +57,6 @@ $(function () {
     });
 
     socket.on('chat message', function (msg) {
-        console.log(true);
         $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
         $(window).scrollTop($(window).height() + $(window).scrollTop());
     });
@@ -75,7 +74,13 @@ $(function () {
         $('#users').empty();
         $('#users').append($('<li>').text(`${Object.keys(allUsers).length} Online Users:`));
         for (let key in allUsers) {
-            $('#users').append($('<li>').text(allUsers[key].nickname).addClass('user'))
+            if(key === socket.id){
+                $('#users').append($('<li>').text(`${allUsers[key].nickname} (You)`))
+
+            }
+            else {
+                $('#users').append($('<li>').text(allUsers[key].nickname))
+            }
         }
     }
 });
