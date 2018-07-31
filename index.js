@@ -37,7 +37,7 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('chat message', function (msg, nickname) {
-        io.emit('chat message', {nickname: nickname, text: msg});
+        socket.broadcast.emit('chat message', {nickname: nickname, text: msg});
     });
     socket.on('is typing', function (nickname, className) {
         socket.broadcast.emit('is typing', nickname, className);

@@ -8,6 +8,8 @@ $(function () {
         nickname = allUsers[socket.id].nickname;
 
         if ($('#m').val().length >= 1) {
+            $('#messages').append($('<li>').text(`${nickname}: ${$('#m').val()}`).addClass('blue'));
+            $(window).scrollTop($(window).height() + $(window).scrollTop());
             socket.emit('chat message', $('#m').val(), nickname);
         }
 
@@ -55,11 +57,14 @@ $(function () {
     });
 
     socket.on('chat message', function (msg) {
+        console.log(true);
         $('#messages').append($('<li>').text(`${msg.nickname}: ${msg.text}`));
+        $(window).scrollTop($(window).height() + $(window).scrollTop());
     });
 
     socket.on('is typing', function (nickname, className) {
         $('#messages').append($('<li>').text(`${nickname.join(' ')} is typing`).addClass(className));
+        $(window).scrollTop($(window).height() + $(window).scrollTop());
     });
 
     socket.on('is not typing', function (nickname) {
@@ -68,7 +73,7 @@ $(function () {
 
     function showOnlineUsers() {
         $('#users').empty();
-        $('#users').append($('<li>').text('Online Users'));
+        $('#users').append($('<li>').text('Online Users:'));
         for (let key in allUsers) {
             $('#users').append($('<li>').text(allUsers[key].nickname))
         }
