@@ -75,11 +75,11 @@ $(function () {
         $('#users').append($('<li>').text(`${Object.keys(allUsers).length} Online Users:`));
         for (let key in allUsers) {
             if(key === socket.id){
-                $('#users').append($('<li>').text(`${allUsers[key].nickname} (You)`))
+                $('#users').append($('<li>').text(`${allUsers[key].nickname} (You)`));
 
             }
             else {
-                $('#users').append($('<li>').text(allUsers[key].nickname))
+                $('#users').append($('<li>').text(allUsers[key].nickname));
             }
         }
     }
