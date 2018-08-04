@@ -17,6 +17,12 @@ After that install the node modules with:
 npm install
 ```
 
+And run the server with:
+
+```
+node index
+```
+
 ## Built With
 * [NodeJS](https://nodejs.org/en/) - Server
 
