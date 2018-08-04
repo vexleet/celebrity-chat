@@ -36,12 +36,15 @@ io.on('connection', function (socket) {
             io.emit('disconnect');
         }
     });
+
     socket.on('chat message', function (msg, nickname) {
         socket.broadcast.emit('chat message', {nickname: nickname, text: msg});
     });
+
     socket.on('is typing', function (nickname, className) {
         socket.broadcast.emit('is typing', nickname, className);
     });
+
     socket.on('is not typing', function (nickname) {
         io.emit('is not typing', nickname);
     });
